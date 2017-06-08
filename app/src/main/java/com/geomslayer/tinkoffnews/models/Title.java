@@ -1,12 +1,16 @@
 package com.geomslayer.tinkoffnews.models;
 
+import java.util.Date;
+
 public class Title {
     private long id;
     private String text;
+    private Date pubDate;
 
-    public Title(long id, String text) {
+    public Title(long id, String text, Date pubDate) {
         this.id = id;
         this.text = text;
+        this.pubDate = pubDate;
     }
 
     public long getId() {
@@ -23,5 +27,13 @@ public class Title {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public Date getPubDate() {
+        return pubDate;
+    }
+
+    public void setPubDate(Date pubDate) {
+        this.pubDate = pubDate;
     }
 }
