@@ -1,7 +1,9 @@
 package com.geomslayer.tinkoffnews.mainscreen;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v4.content.AsyncTaskLoader;
+import android.util.Log;
 
 import com.geomslayer.tinkoffnews.models.Title;
 
@@ -19,6 +21,8 @@ import java.util.List;
 
 class NewsLoader extends AsyncTaskLoader<List<Title>> {
 
+    private static final String TAG = "NewsLoader";
+
     private static final String URL = "https://api.tinkoff.ru/v1/news";
 
     private static final String PAYLOAD = "payload";
@@ -27,22 +31,40 @@ class NewsLoader extends AsyncTaskLoader<List<Title>> {
     private static final String PUB_DATE = "publicationDate";
     private static final String MILLISECONDS = "milliseconds";
 
+    private static final String PREF_NAME = "cache";
+    private static final String JSON = "json";
+
+    private boolean loadFromCache = true;
+
     NewsLoader(Context context) {
         super(context);
     }
 
     @Override
     public List<Title> loadInBackground() {
-        String json = fetchNews();
+        String json = null;
+        if (loadFromCache) {
+            json = restoreFromCache();
+        }
+        if (json == null) {
+            json = fetchNews();
+        }
         if (json == null) {
             return null;
         }
+        loadFromCache = true;
         return parseTitles(json);
     }
 
     @Override
     protected void onStartLoading() {
         forceLoad();
+    }
+
+    @Override
+    protected void onReset() {
+        loadFromCache = false;
+        onStartLoading();
     }
 
     private ArrayList<Title> parseTitles(String json) {
@@ -75,7 +97,9 @@ class NewsLoader extends AsyncTaskLoader<List<Title>> {
             while ((line = reader.readLine()) != null) {
                 response.append(line);
             }
-            return response.toString();
+            String result = response.toString();
+            saveInCache(result);
+            return result;
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -88,6 +112,24 @@ class NewsLoader extends AsyncTaskLoader<List<Title>> {
             }
         }
         return null;
+    }
+
+    private void saveInCache(String json) {
+        SharedPreferences preferences = getContext()
+                .getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        preferences.edit()
+                .putString(JSON, json)
+                .apply();
+        Log.d(TAG, "saved in cache");
+    }
+
+    private String restoreFromCache() {
+        SharedPreferences preferences = getContext()
+                .getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        if (preferences.getString(JSON, null) != null) {
+            Log.d(TAG, "restored from cache");
+        }
+        return preferences.getString(JSON, null);
     }
 
 }
