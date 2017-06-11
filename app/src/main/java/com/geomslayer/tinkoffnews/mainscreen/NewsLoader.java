@@ -3,18 +3,14 @@ package com.geomslayer.tinkoffnews.mainscreen;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v4.content.AsyncTaskLoader;
-import android.util.Log;
 
 import com.geomslayer.tinkoffnews.models.Title;
+import com.geomslayer.tinkoffnews.utils.Downloader;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -87,31 +83,12 @@ class NewsLoader extends AsyncTaskLoader<List<Title>> {
     }
 
     private String fetchNews() {
-        URL url;
-        BufferedReader reader = null;
-        try {
-            url = new URL(URL);
-            reader = new BufferedReader(new InputStreamReader(url.openStream()));
-            StringBuilder response = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
-            }
-            String result = response.toString();
-            saveInCache(result);
-            return result;
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+        Downloader downloader = new Downloader();
+        String json = downloader.download(URL);
+        if (json != null) {
+            saveInCache(json);
         }
-        return null;
+        return json;
     }
 
     private void saveInCache(String json) {
@@ -120,15 +97,11 @@ class NewsLoader extends AsyncTaskLoader<List<Title>> {
         preferences.edit()
                 .putString(JSON, json)
                 .apply();
-        Log.d(TAG, "saved in cache");
     }
 
     private String restoreFromCache() {
         SharedPreferences preferences = getContext()
                 .getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        if (preferences.getString(JSON, null) != null) {
-            Log.d(TAG, "restored from cache");
-        }
         return preferences.getString(JSON, null);
     }
 

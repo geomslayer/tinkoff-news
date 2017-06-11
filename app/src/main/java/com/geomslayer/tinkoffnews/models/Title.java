@@ -1,8 +1,9 @@
 package com.geomslayer.tinkoffnews.models;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Title {
+public class Title implements Serializable {
     private long id;
     private String text;
     private Date pubDate;

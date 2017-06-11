@@ -1,5 +1,6 @@
 package com.geomslayer.tinkoffnews.mainscreen;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -8,10 +9,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.Toast;
 
 import com.geomslayer.tinkoffnews.R;
+import com.geomslayer.tinkoffnews.details.DetailsActivity;
 import com.geomslayer.tinkoffnews.models.Title;
+import com.geomslayer.tinkoffnews.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,8 +53,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         adapter.setOnclickListener(new NewsAdapter.OnClickListener() {
             @Override
             public void onClick(int position) {
-                String title = dataset.get(position).getText();
-                Toast.makeText(MainActivity.this, title, Toast.LENGTH_SHORT).show();
+                Title title = dataset.get(position);
+                Intent detailsIntent = new Intent(MainActivity.this, DetailsActivity.class);
+                detailsIntent.putExtra(Utils.TITLE_EXTRA, title);
+                startActivity(detailsIntent);
             }
         });
         LinearLayoutManager manager = new LinearLayoutManager(this);
