@@ -18,7 +18,7 @@ class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     private OnClickListener listener = new OnClickListener() {
         @Override
         public void onClick(int position) {
-            // pass
+            // do nothing
         }
     };
 
@@ -42,7 +42,7 @@ class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         return dataset == null ? 0 : dataset.size();
     }
 
-    public void setOnclickListener(OnClickListener listener) {
+    void setOnclickListener(OnClickListener listener) {
         this.listener = listener;
     }
 

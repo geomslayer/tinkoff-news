@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 public class Downloader {
+
     public String download(String url) {
         URL urlObject;
         BufferedReader reader = null;
@@ -31,4 +32,5 @@ public class Downloader {
         }
         return null;
     }
+
 }

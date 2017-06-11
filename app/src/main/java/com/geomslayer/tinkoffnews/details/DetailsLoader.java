@@ -3,19 +3,16 @@ package com.geomslayer.tinkoffnews.details;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v4.content.AsyncTaskLoader;
-import android.util.Log;
 
 import com.geomslayer.tinkoffnews.utils.Downloader;
+import com.geomslayer.tinkoffnews.utils.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class DetailsLoader extends AsyncTaskLoader<String> {
+class DetailsLoader extends AsyncTaskLoader<String> {
 
-    private static final String TAG = "DetailsLoader";
-
-    private static final String URL = "https://api.tinkoff.ru/v1/news_content?id=";
-    private static final String KEY = "news-";
+    private static final String KEY_PREFIX = "news-";
     private static final String PREF_NAME = "details";
 
     private static final String PAYLOAD = "payload";
@@ -23,14 +20,13 @@ public class DetailsLoader extends AsyncTaskLoader<String> {
 
     private long newsId;
 
-    public DetailsLoader(Context context, long id) {
+    DetailsLoader(Context context, long id) {
         super(context);
         this.newsId = id;
     }
 
     @Override
     public String loadInBackground() {
-        Log.d(TAG, "loadInBackground: ");
         String json = loadFromCache();
         if (json == null) {
             json = loadFromNetwork();
@@ -58,7 +54,7 @@ public class DetailsLoader extends AsyncTaskLoader<String> {
     }
 
     private String loadFromNetwork() {
-        String json = new Downloader().download(URL + newsId);
+        String json = new Downloader().download(Utils.DETAILS_URL + newsId);
         if (json != null) {
             saveInCache(json);
         }
@@ -80,7 +76,7 @@ public class DetailsLoader extends AsyncTaskLoader<String> {
     }
 
     private String formKey() {
-        return KEY + newsId;
+        return KEY_PREFIX + newsId;
     }
 
 }

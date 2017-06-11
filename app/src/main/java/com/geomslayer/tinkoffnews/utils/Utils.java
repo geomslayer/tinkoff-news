@@ -10,6 +10,9 @@ import java.util.Locale;
 
 public class Utils {
 
+    public static final String NEWS_URL = "https://api.tinkoff.ru/v1/news";
+    public static final String DETAILS_URL = "https://api.tinkoff.ru/v1/news_content?id=";
+
     public static final String TITLE_EXTRA = "title_extra";
 
     public static final DateFormat DATE_FORMAT =

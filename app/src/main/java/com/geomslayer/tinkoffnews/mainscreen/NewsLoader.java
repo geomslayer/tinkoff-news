@@ -3,10 +3,10 @@ package com.geomslayer.tinkoffnews.mainscreen;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v4.content.AsyncTaskLoader;
-import android.util.Log;
 
 import com.geomslayer.tinkoffnews.models.Title;
 import com.geomslayer.tinkoffnews.utils.Downloader;
+import com.geomslayer.tinkoffnews.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,9 +18,6 @@ import java.util.List;
 
 class NewsLoader extends AsyncTaskLoader<List<Title>> {
 
-    private static final String TAG = "NewsLoader";
-
-    private static final String URL = "https://api.tinkoff.ru/v1/news";
 
     private static final String PAYLOAD = "payload";
     private static final String ID = "id";
@@ -42,7 +39,6 @@ class NewsLoader extends AsyncTaskLoader<List<Title>> {
     public List<Title> loadInBackground() {
         String json = null;
         if (loadFromCache) {
-            Log.d(TAG, "loadInBackground: load from cache");
             json = restoreFromCache();
         }
         if (json == null) {
@@ -58,13 +54,6 @@ class NewsLoader extends AsyncTaskLoader<List<Title>> {
     @Override
     protected void onStartLoading() {
         forceLoad();
-    }
-
-    @Override
-    protected void onReset() {
-        Log.d(TAG, "onReset: ");
-        loadFromCache = false;
-//        onStartLoading();
     }
 
     private ArrayList<Title> parseTitles(String json) {
@@ -88,7 +77,7 @@ class NewsLoader extends AsyncTaskLoader<List<Title>> {
 
     private String fetchNews() {
         Downloader downloader = new Downloader();
-        String json = downloader.download(URL);
+        String json = downloader.download(Utils.NEWS_URL);
         if (json != null) {
             saveInCache(json);
         }

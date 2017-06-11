@@ -5,7 +5,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +16,6 @@ import com.geomslayer.tinkoffnews.utils.Utils;
 
 
 public class DetailsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<String> {
-
-    private static final String TAG = "DetailsActivity";
 
     private static final String NEWS_ID = "news_id";
     private static final int DETAILS_LOADER_ID = 1;
@@ -80,7 +77,6 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     }
 
     @Override
-    public void onLoaderReset(Loader<String> loader) {
-        Log.d("NewsLoader", "onLoaderReset: onLoaderReset");
-    }
+    public void onLoaderReset(Loader<String> loader) {}
+
 }
