@@ -5,7 +5,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.geomslayer.tinkoffnews.R;
@@ -28,10 +28,22 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
+        getSupportActionBar().setTitle(getString(R.string.back));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         title = (Title) getIntent().getSerializableExtra(Utils.TITLE_EXTRA);
         ((TextView) findViewById(R.id.title)).setText(Utils.toSpanned(title.getText()));
 
         initContent();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void initContent() {
@@ -49,7 +61,6 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
     @Override
     public void onLoadFinished(Loader<String> loader, String data) {
-        Log.d(TAG, "onLoadFinished: " + data);
         if (data != null) {
             content.setText(Utils.toSpanned(data));
         } else {
