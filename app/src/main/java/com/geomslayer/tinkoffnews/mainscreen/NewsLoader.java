@@ -3,6 +3,7 @@ package com.geomslayer.tinkoffnews.mainscreen;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v4.content.AsyncTaskLoader;
+import android.util.Log;
 
 import com.geomslayer.tinkoffnews.models.Title;
 import com.geomslayer.tinkoffnews.utils.Downloader;
@@ -30,16 +31,18 @@ class NewsLoader extends AsyncTaskLoader<List<Title>> {
     private static final String PREF_NAME = "cache";
     private static final String JSON = "json";
 
-    private boolean loadFromCache = true;
+    private boolean loadFromCache;
 
-    NewsLoader(Context context) {
+    NewsLoader(Context context, boolean loadFromCache) {
         super(context);
+        this.loadFromCache = loadFromCache;
     }
 
     @Override
     public List<Title> loadInBackground() {
         String json = null;
         if (loadFromCache) {
+            Log.d(TAG, "loadInBackground: load from cache");
             json = restoreFromCache();
         }
         if (json == null) {
@@ -59,8 +62,9 @@ class NewsLoader extends AsyncTaskLoader<List<Title>> {
 
     @Override
     protected void onReset() {
+        Log.d(TAG, "onReset: ");
         loadFromCache = false;
-        onStartLoading();
+//        onStartLoading();
     }
 
     private ArrayList<Title> parseTitles(String json) {

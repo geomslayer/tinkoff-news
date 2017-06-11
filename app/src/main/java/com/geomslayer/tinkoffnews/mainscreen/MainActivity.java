@@ -9,6 +9,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.geomslayer.tinkoffnews.R;
 import com.geomslayer.tinkoffnews.details.DetailsActivity;
@@ -20,16 +23,20 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Title>> {
 
-    private static int NEWS_LOADER_ID = 0;
+    private static final int NEWS_LOADER_ID = 0;
+    private static final String LOAD_FROM_CACHE = "load_from_cache";
 
     private RecyclerView recyclerView;
     private SwipeRefreshLayout srl;
+    private ViewGroup placeholder;
     private ArrayList<Title> dataset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        placeholder = (ViewGroup) findViewById(R.id.placeholder);
 
         initRefreshLayout();
         initRecyclerView();
@@ -65,25 +72,34 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         recyclerView.setAdapter(adapter);
     }
 
+    private void setPlaceholderVisibility(boolean active) {
+        placeholder.setVisibility(active ? View.VISIBLE : View.GONE);
+    }
+
     void startLoading() {
-        getSupportLoaderManager().initLoader(NEWS_LOADER_ID, null, this);
+        Bundle args = new Bundle();
+        args.putBoolean(LOAD_FROM_CACHE, true);
+        getSupportLoaderManager().initLoader(NEWS_LOADER_ID, args, this);
     }
 
     void restartLoading() {
-        getSupportLoaderManager().restartLoader(NEWS_LOADER_ID, null, this);
+        Bundle args = new Bundle();
+        args.putBoolean(LOAD_FROM_CACHE, false);
+        getSupportLoaderManager().restartLoader(NEWS_LOADER_ID, args, this);
     }
 
     @Override
     public Loader<List<Title>> onCreateLoader(int id, Bundle args) {
-        return new NewsLoader(this);
+        return new NewsLoader(this, args.getBoolean(LOAD_FROM_CACHE));
     }
 
     @Override
     public void onLoadFinished(Loader<List<Title>> loader, List<Title> data) {
         dataset.clear();
         if (data == null) {
-            // notify user
+            setPlaceholderVisibility(true);
         } else {
+            setPlaceholderVisibility(false);
             dataset.addAll(data);
         }
         recyclerView.getAdapter().notifyDataSetChanged();
@@ -92,6 +108,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoaderReset(Loader<List<Title>> loader) {
-
+        Log.d("NewsLoader", "onLoaderReset: onLoaderReset");
     }
 }

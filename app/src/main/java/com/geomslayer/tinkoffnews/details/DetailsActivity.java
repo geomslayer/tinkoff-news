@@ -5,7 +5,10 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.geomslayer.tinkoffnews.R;
@@ -22,6 +25,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
     private Title title;
     private TextView content;
+    private ViewGroup placeholder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +37,8 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
         title = (Title) getIntent().getSerializableExtra(Utils.TITLE_EXTRA);
         ((TextView) findViewById(R.id.title)).setText(Utils.toSpanned(title.getText()));
+
+        placeholder = (ViewGroup) findViewById(R.id.placeholder);
 
         initContent();
     }
@@ -54,6 +60,10 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         getSupportLoaderManager().initLoader(DETAILS_LOADER_ID, args, this);
     }
 
+    private void setPlaceholderVisibility(boolean active) {
+        placeholder.setVisibility(active ? View.VISIBLE : View.GONE);
+    }
+
     @Override
     public Loader<String> onCreateLoader(int id, Bundle args) {
         return new DetailsLoader(this, args.getLong(NEWS_ID));
@@ -62,14 +72,15 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     @Override
     public void onLoadFinished(Loader<String> loader, String data) {
         if (data != null) {
+            setPlaceholderVisibility(false);
             content.setText(Utils.toSpanned(data));
         } else {
-            // notify
+            setPlaceholderVisibility(true);
         }
     }
 
     @Override
     public void onLoaderReset(Loader<String> loader) {
-
+        Log.d("NewsLoader", "onLoaderReset: onLoaderReset");
     }
 }
