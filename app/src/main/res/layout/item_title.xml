@@ -1,11 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/text"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
     android:clickable="true"
-    android:padding="8dp"
-    android:textColor="@android:color/primary_text_light"
-    android:textSize="18sp"/>
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:textColor="@android:color/primary_text_light"
+        android:textSize="18sp"
+        tools:text="Title"/>
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="@color/colorGrey"
+        android:paddingBottom="8dp"
+        android:paddingEnd="8dp"
+        android:paddingStart="8dp"
+        tools:text="18:05"/>
+
+</LinearLayout>

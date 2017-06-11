@@ -3,6 +3,7 @@ package com.geomslayer.tinkoffnews.mainscreen;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static int NEWS_LOADER_ID = 0;
 
     private RecyclerView recyclerView;
+    private SwipeRefreshLayout srl;
     private ArrayList<Title> dataset;
 
     @Override
@@ -27,7 +29,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initRefreshLayout();
         initRecyclerView();
+    }
+
+    void initRefreshLayout() {
+        srl = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                restartLoading();
+            }
+        });
     }
 
     void initRecyclerView() {
@@ -52,6 +65,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         getSupportLoaderManager().initLoader(NEWS_LOADER_ID, null, this);
     }
 
+    void restartLoading() {
+        getSupportLoaderManager().restartLoader(NEWS_LOADER_ID, null, this);
+    }
+
     @Override
     public Loader<List<Title>> onCreateLoader(int id, Bundle args) {
         return new NewsLoader(this);
@@ -66,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             dataset.addAll(data);
         }
         recyclerView.getAdapter().notifyDataSetChanged();
+        srl.setRefreshing(false);
     }
 
     @Override
